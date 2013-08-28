@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<!--[if IE 8]> 				 <html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Kingkong123</title>
+  
+	<link rel="stylesheet" href="css/app.css">
+  
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="js/githubuserlang-api.js"></script>
+
+	<script src="js/vendor/custom.modernizr.js"></script>
+
+<script>
+(function($) {
+	$(function(){
+		$(document).foundation();
+
+		var test = new $.githubuserlang({ user: 'kingkong123' });
+		//console.log( test );
+		//console.log( test.getUserInfo(function(){}) );
+
+		test.getAllLangs(function(data){
+			console.log(data);
+		});
+	});
+})(jQuery);
+</script>
+</head>
+<body>
+	<div class="header row">
+		<div class="large-12 columns">
+			<h2>Welcome to Foundation</h2>
+			<p>This is version 4.3.1.</p>
+			<hr />
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="large-3 columns personal-info">
+		</div>
+		<div class="large-9 columns repos">
+		</div>
+	</div>
+  
+	<script src="js/foundation/foundation.js"></script>
+	
+	<script src="js/foundation/foundation.abide.js"></script>
+	
+	<script src="js/foundation/foundation.alerts.js"></script>
+	
+	<script src="js/foundation/foundation.clearing.js"></script>
+	
+	<script src="js/foundation/foundation.cookie.js"></script>
+	
+	<script src="js/foundation/foundation.dropdown.js"></script>
+	
+	<script src="js/foundation/foundation.forms.js"></script>
+	
+	<script src="js/foundation/foundation.interchange.js"></script>
+	
+	<script src="js/foundation/foundation.joyride.js"></script>
+	
+	<script src="js/foundation/foundation.magellan.js"></script>
+	
+	<script src="js/foundation/foundation.orbit.js"></script>
+	
+	<script src="js/foundation/foundation.placeholder.js"></script>
+	
+	<script src="js/foundation/foundation.reveal.js"></script>
+	
+	<script src="js/foundation/foundation.section.js"></script>
+	
+	<script src="js/foundation/foundation.tooltips.js"></script>
+	
+	<script src="js/foundation/foundation.topbar.js"></script>
+</body>
+</html>
