@@ -2,11 +2,10 @@
 	$.githubuserlang = function( options ) {
 		var $scope = this;
 		var opts = {}, langs = {};
-		var completed = false;
 
-		var userInfo = { success: false, completed: false, data: {}, message: '' },
-			allRepos = { success: false, completed: false, data: [], message: '' },
-			allLangs = { success: false, completed: false, process: false, parsedRepo: 0, data: {}, message: '' };
+		var userInfo = { success: false, data: {}, message: '' },
+			allRepos = { success: false, data: [], message: '' },
+			allLangs = { success: false, process: false, parsedRepo: 0, data: {}, message: '' };
 
 		var API_URL = 'https://api.github.com/';
 
@@ -43,10 +42,6 @@
 			return this;
 		};
 
-		this.getCompleted = function(){
-			return completed;
-		}
-
 		this.getUserInfo = function(callback){
 			if(!userInfo.success){
 				var url = getUserInfoURL(opts.user);
@@ -73,7 +68,7 @@
 			}
 		}
 
-		this.getAllRepos = function(callback){
+		this.getAllRepos = function(callback1, callback2){
 			if(!allRepos.success){
 				var url = getAllReposURL(opts.user);
 				var allReposJson = getJson(url);
@@ -84,8 +79,12 @@
 						allRepos.success = true;
 						allRepos.data = data.responseJSON;
 						
-						if( $.isFunction(callback) ){
-							return callback(allRepos);
+						if( $.isFunction(callback1) ){
+							if( callback2 != null ){
+								return callback1(callback2);
+							}else{
+								return callback1(allRepos);
+							}
 						}else{
 							return { success: false, message: 'Callback function not exists' };
 						}
@@ -95,7 +94,11 @@
 					}
 				});
 			}else{
-				return callback(allRepos);
+				if( callback2 != null ){
+					return callback1(callback2);
+				}else{
+					return callback1(allRepos);
+				}
 			}
 		}
 
@@ -138,13 +141,9 @@
 			}
 		}
 
-		this.allLangCallback = null;
-
 		this.getAllLangs = function(callback){
-			this.allLangCallback = callback;
-			
 			if(!allRepos.success){
-				this.getAllRepos(this.getAllLangs);
+				this.getAllRepos(this.getAllLangs, callback);
 			}else{
 				if(!allLangs.success && !allLangs.process){
 					langRepos = getAllReposLength();
@@ -156,37 +155,32 @@
 						var langJson = getJson(url);
 
 						langJson.complete(function(data){
-							//console.log(data);
 							if(data.status == 200){
 								var parsedRepo = getParsedRepo();
 								updateParsedRepo(parsedRepo +1);
 
 								updateLangs(data.responseJSON);
 
-								return checkLangsCompleted($scope.allLangCallback);
+								return checkLangsCompleted(callback);
 							}else{
 								allRepos.message = 'Fail to connect to server, please retry.';
-								return $scope.allLangCallback(allLangs);
+								return callback(allLangs);
 							}
 						});
 					});
 
 					allLangs.process = true;
 				}else if(!allLangs.success && allLangs.process){
-					return this.getAllLangs(this.allLangCallback);
+					return this.getAllLangs(callback);
 				}else if( allLangs.success && allLangs.process && langRepos == getParsedRepo() ){
-					if( $.isFunction(this.allLangCallback) ){
-						return this.allLangCallback(allLangs);
+					if( $.isFunction(callback) ){
+						return callback(allLangs);
 					}else{
 						return { success: false, message: 'Callback function not exists' };
 					}
 				}
 			}
 		}
-
-		this.getOpts = function(){
-			return opts;
-		};
 		
 		return this.init(options);
 	};
