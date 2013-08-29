@@ -21,14 +21,19 @@
 			repoType: 'all', // all, owner, public, private, member
 			repoSort: 'full_name', // created, updated, pushed, full_name
 			repoDirection: 'asc', // asc, desc
+
+			langSort: 'name', // name, size
 			langDirection: 'asc', // asc, desc
 		};
 
 		var REPO_TYPES = ['all', 'owner', 'public', 'private', 'member'];
 		var REPO_DEFAULT_SORTS = ['created', 'updated', 'pushed', 'full_name'];
-		var REPO_DIRECTIONS = ['asc', 'desc'];
+
+		var DIRECTIONS = ['asc', 'desc'];
 
 		var REPO_CUSTOM_SORTS = ['forks', 'watchers', 'open_issues', 'size'];
+
+		var LANG_SORTS = ['name', 'size'];
 
 		var getJson = function(url){
 			return $.getJSON(url, function(data){});
@@ -49,8 +54,10 @@
 				getQueryArray.push('sort='+opts.repoSort);
 			}
 
-			if((opts.repoDirection != defaults.repoDirection) && (REPO_DIRECTIONS.indexOf(opts.repoDirection) > -1)){
+			if((opts.repoDirection != defaults.repoDirection) && (DIRECTIONS.indexOf(opts.repoDirection) > -1)){
 				getQueryArray.push('direction='+opts.repoDirection);
+			}else if(DIRECTIONS.indexOf(opts.repoDirection) == -1){
+				opts.repoDirection = defaults.repoDirection;
 			}
 
 			if(getQueryArray.length > 0){
@@ -76,7 +83,7 @@
 				var userInfoJson = getJson(url);
 
 				userInfoJson.complete(function(data){
-					console.log(data);
+					//console.log(data);
 					if(data.status == 200){
 						userInfo.success = true;
 						userInfo.data = data.responseJSON;
@@ -102,13 +109,13 @@
 				var allReposJson = getJson(url);
 
 				allReposJson.complete(function(data){
-					console.log(data);
+					//console.log(data);
 					if(data.status == 200){
 						if((opts.repoSort != defaults.repoSort) && (REPO_CUSTOM_SORTS.indexOf(opts.repoSort) > -1)){
 							data.responseJSON.sort( $scope.customSort(opts.repoSort, opts.repoDirection) );
 						}
 
-						console.log(data);
+						//console.log(data);
 						allRepos.success = true;
 						allRepos.data = data.responseJSON;
 						
@@ -157,19 +164,26 @@
 		}
 		var updateLangs = function(data){
 			$.each(data, function(idx, val){
-				console.log(idx+" - "+val);
+				//console.log(idx+" - "+val);
 				if( typeof(langs[idx]) == 'undefined' ){
 					langs[idx] = val;
 				}else{
 					langs[idx] += val;
 				}
 			});
+			//console.log(langs);
 		}
 
 		var checkLangsCompleted = function(callback){
 			if(getParsedRepo() == langRepos && allLangs.process && !allLangs.success){
+				var newLang = [];
+
+				$.each(langs, function(idx, val){
+					newLang.push({ name: idx, size: val });
+				});
+
 				allLangs.success = true;
-				allLangs.data = langs;
+				allLangs.data = newLang;
 				return $scope.getAllLangs(callback);
 			}
 		}
@@ -182,7 +196,7 @@
 					langRepos = getAllReposLength();
 
 					$.each(allRepos.data, function(idx, val){
-						console.log(val);
+						//console.log(val);
 
 						var url = getRepoLangsURL(opts.user, val.name);
 						var langJson = getJson(url);
@@ -207,6 +221,14 @@
 					return this.getAllLangs(callback);
 				}else if( allLangs.success && allLangs.process && langRepos == getParsedRepo() ){
 					if( $.isFunction(callback) ){
+						if( (LANG_SORTS.indexOf(opts.langSort) > -1) && (DIRECTIONS.indexOf(opts.langDirection) > -1) ){
+							allLangs.data.sort( $scope.customSort(opts.langSort, opts.langDirection) );
+						}else if( (LANG_SORTS.indexOf(opts.langSort) == -1) && (DIRECTIONS.indexOf(opts.langDirection) > -1) ){
+							allLangs.data.sort( $scope.customSort(defaults.langSort, opts.langDirection) );
+						}else if( (LANG_SORTS.indexOf(opts.langSort) > -1) && (DIRECTIONS.indexOf(opts.langDirection) == -1) ){
+							allLangs.data.sort( $scope.customSort(opts.langSort, defaults.langDirection) );
+						}
+
 						return callback(allLangs);
 					}else{
 						return { success: false, message: 'Callback function not exists' };
