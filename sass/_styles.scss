@@ -166,6 +166,10 @@ ul.lang-list li{
 		@include lang-list-color;
 		background: $ruby-color;
 	}
+	&.perl:after{
+		@include lang-list-color;
+		background: $perl-color;
+	}
 }
 
 @media #{$small} {
