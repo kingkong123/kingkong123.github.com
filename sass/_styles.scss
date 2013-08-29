@@ -1,0 +1,173 @@
+@import url(http://fonts.googleapis.com/css?family=Raleway:400,300,200);
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:300);
+
+$java-color: #B07219;
+$javascript-color: #F15501;
+$css-color: #1F085E;
+$php-color: #6E03C1;
+$ruby-color: #701516;
+
+@mixin lang-list-color{
+	display: block;
+	width: 18px;
+	height: 18px;
+	position: absolute;
+	content: "";
+	left: 12px;
+	top: 4px;
+}
+
+.h1{
+	font-size: $h1-font-size;
+}
+.h2{
+	font-size: $h2-font-size;
+}
+.h3{
+	font-size: $h3-font-size;
+}
+.h4{
+	font-size: $h4-font-size;
+}
+.h5{
+	font-size: $h5-font-size;
+}
+.h6{
+	font-size: $h6-font-size;
+}
+
+.body{
+	padding: 20px 0;
+	min-height: 300px;
+}
+.footer{
+	color: #666;
+	font-size: 95%;
+	text-align: center;
+	max-width: 100%;
+	padding: 8px 0;
+	border-top: 1px solid #999;
+}
+.personal-info{
+	margin-bottom: 10px;
+	text-align: center;
+	opacity: 0;
+	transition: all 0.25s;
+
+	img{
+		margin: 0 auto;
+		border: 1px solid #eee;
+		padding: 3px;
+		display: block;
+		box-shadow: 2px 3px 3px #CCCCCC;
+	}
+}
+
+.language-bar{
+	height: 20px;
+	position: relative;
+	width: 100%;
+	margin-bottom: 10px;
+	span{
+		display: inline-block;
+		height: 100%;
+		opacity: 0.65;
+		&.css{
+			background: $css-color;
+		}
+		&.java{
+			background: $java-color;
+		}
+		&.javascript{
+			background: $javascript-color;
+		}
+		&.php{
+			background: $php-color;
+		}
+		&.ruby{
+			background: $ruby-color;
+		}
+		&.css, &.java, &.javascript, &.php, &.ruby{
+			&:hover{
+				opacity: 1;
+			}
+		}
+
+		&.mask{
+			width: 0;
+			right: 0;
+			position: absolute;
+			top: 0;
+			transition: all 0.35s;
+			background: #fff;
+			display: block;
+			opacity: 0.9;
+			&.display{
+				width: 100%;
+			}
+		}
+	}
+}
+.repos{
+	opacity: 0;
+}
+.repos ul, .language-info ul{
+	list-style: none;
+}
+
+ul.repo-list > li{
+	border-bottom: 1px solid #ccc;
+
+	&:last-child{
+		border-bottom: 0;
+	}
+}
+
+ul.lang-list li{
+	padding-left: 38px;
+	position: relative;
+	display: inline-block;
+	
+	span.byte{
+		font-size: 90%;
+		color: #999;
+		display: none;
+		&:before{
+			content: " (";
+		}
+		&:after{
+			content: " byte)"
+		}
+	}
+	&.css:after{
+		@include lang-list-color;
+		background: $css-color;
+	}
+	&.java:after{
+		@include lang-list-color;
+		background: $java-color;
+	}
+	&.javascript:after{
+		@include lang-list-color;
+		background: $javascript-color;
+	}
+	&.php:after{
+		@include lang-list-color;
+		background: $php-color;
+	}
+	&.ruby:after{
+		@include lang-list-color;
+		background: $ruby-color;
+	}
+}
+
+@media #{$small} {
+	ul.lang-list li{
+		display: block;
+
+		span.byte{
+			display: inline;
+		}
+	}
+}
+

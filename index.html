@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="css/app.css">
   
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-	<script src="js/githubuserlang-api.js"></script>
+	<script src="js/GithubUserApi.js"></script>
 
 	<script src="js/vendor/custom.modernizr.js"></script>
 
@@ -20,63 +20,121 @@
 	$(function(){
 		$(document).foundation();
 
-		var test = new $.githubuserlang({ user: 'kingkong123' });
-		//console.log( test );
-		//console.log( test.getUserInfo(function(){}) );
+		var githubapi = new $.GithubUserApi({
+			user: 'kingkong123',
+			repoSort: 'forks',
+			repoDirection: 'desc',
+			langSort: 'size', // name, size
+			langDirection: 'desc', // asc, desc
+		});
+		
+		githubapi.getAllRepos(function(result){
+			var repos = '';
 
-		test.getAllLangs(function(data){
-			console.log(data);
+			if(result.success){
+				if(result.data.length > 0){
+					repos += '<ul class="repo-list">';
+
+					$.each(result.data, function(idx, val){
+						repos += '<li><h2><a href="'+val.html_url+'">'+val.name+'</a></h2><p>'+val.description+'</p></li>';
+					});
+
+					repos += '</ul>';
+				}
+			}else if(!result.success && result.message){
+				repos = result.message;
+			}else if(!result.success && !result.message){
+				repos = 'Error occurs, please try to reload the page.';
+			}
+
+			$('.repos').html(repos).css('opacity', 1);
+
+			githubapi.getAllLangs(function(langResult){
+				var langs = '';
+				var langSum = 0;
+				var langBar = '';
+
+				if(langResult.success){
+					if(langResult.data.length > 0){
+						langs += '<ul class="lang-list">';
+
+						$.each(langResult.data, function(idx, val){
+							langSum += val.size;
+
+							langs += '<li class="'+getLanguageClass(val.name)+'">'+val.name+'<span class="byte">'+val.size+'</span></li>';
+						});
+
+						langs += '</ul>';
+					}
+				}else if(!langResult.success && langResult.message){
+					langs = langResult.message;
+				}else if(!langResult.success && !langResult.message){
+					langs = 'Error occurs, please try to reload the page.';
+				}
+
+				$('.language-info').append(langs);
+
+				if(langSum > 0){
+					$.each(langResult.data, function(idx, val){
+						langBar += '<span class="'+getLanguageClass(val.name)+'" style="width: '+((val.size / langSum) *100).toFixed(3)+'%;"></span>';
+					});
+
+					$('.language-bar').prepend(langBar);
+					$('.language-bar').find('span.mask').removeClass('display');
+				}
+			});
+		});
+
+		githubapi.getUserInfo(function(result){
+			var user_info = '';
+
+			if(result.success){
+				user_info += '<a href="'+result.data.html_url+'"><img src="http://gravatar.com/avatar/'+result.data.gravatar_id+'?s=400" title="'+result.data.name+'" /></a>';
+				user_info += '<h1 class="h3">'+result.data.name+'</h1><hr />';
+			}else if(!result.success && result.message){
+				user_info = result.message;
+			}else if(!result.success && !result.message){
+				user_info = 'Error occurs, please try to reload the page.';
+			}
+
+			$('.personal-info').html(user_info).css('opacity', 1);
 		});
 	});
+	
+	function getLanguageClass(lang){
+		return lang.replace('#', '-sharp').toLowerCase();
+	}
 })(jQuery);
 </script>
 </head>
 <body>
-	<div class="header row">
-		<div class="large-12 columns">
-			<h2>Welcome to Foundation</h2>
-			<p>This is version 4.3.1.</p>
-			<hr />
+	<div class="row body">
+		<div class="large-3 columns left-contents">
+			<div class="personal-info"></div>
+			<div class="language-bar"><span class="mask display"></span></div>
+			<div class="language-info"></div>
+		</div>
+		<div class="large-9 columns">
+			<div class="aboutme"></div>
+			<div class="repos"></div>
 		</div>
 	</div>
-
-	<div class="row">
-		<div class="large-3 columns personal-info">
-		</div>
-		<div class="large-9 columns repos">
+	<div class="row footer">
+		<div class="large-12 columns">
+			Fork me on GitHub (<a href="https://github.com/kingkong123">kingkong123</a>)
 		</div>
 	</div>
   
 	<script src="js/foundation/foundation.js"></script>
 	
-	<script src="js/foundation/foundation.abide.js"></script>
-	
 	<script src="js/foundation/foundation.alerts.js"></script>
-	
-	<script src="js/foundation/foundation.clearing.js"></script>
-	
-	<script src="js/foundation/foundation.cookie.js"></script>
 	
 	<script src="js/foundation/foundation.dropdown.js"></script>
 	
 	<script src="js/foundation/foundation.forms.js"></script>
 	
-	<script src="js/foundation/foundation.interchange.js"></script>
-	
-	<script src="js/foundation/foundation.joyride.js"></script>
-	
-	<script src="js/foundation/foundation.magellan.js"></script>
-	
-	<script src="js/foundation/foundation.orbit.js"></script>
-	
-	<script src="js/foundation/foundation.placeholder.js"></script>
-	
-	<script src="js/foundation/foundation.reveal.js"></script>
-	
 	<script src="js/foundation/foundation.section.js"></script>
 	
 	<script src="js/foundation/foundation.tooltips.js"></script>
-	
-	<script src="js/foundation/foundation.topbar.js"></script>
 </body>
 </html>
