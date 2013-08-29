@@ -6,6 +6,9 @@ $javascript-color: #F15501;
 $css-color: #1F085E;
 $php-color: #6E03C1;
 $ruby-color: #701516;
+$perl-color: #0298C3;
+$c-color: #555555;
+$shell-color: #5861CE;
 
 @mixin lang-list-color{
 	display: block;
@@ -88,7 +91,10 @@ $ruby-color: #701516;
 		&.ruby{
 			background: $ruby-color;
 		}
-		&.css, &.java, &.javascript, &.php, &.ruby{
+		&.perl{
+			background: $perl-color;
+		}
+		&.css, &.java, &.javascript, &.php, &.ruby, &.perl{
 			&:hover{
 				opacity: 1;
 			}

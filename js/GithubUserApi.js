@@ -1,3 +1,11 @@
+/*
+ * GitHubUserApi.js
+ * version 1.0.0
+ * jQuery Plugin
+ * by kingkong123 (http://kingkong123.github.io/)
+ * MIT License
+ */
+ 
 (function ( $ ) {
 	$.GithubUserApi = function( options ) {
 		var $scope = this;
