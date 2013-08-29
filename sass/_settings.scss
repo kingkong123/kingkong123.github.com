@@ -167,7 +167,7 @@ $header-font-weight: 200;
 // $header-line-height: 1.4;
 // $header-top-margin: .2em;
 // $header-bottom-margin: .5em;
-// $header-text-rendering: optimizeLegibility;
+$header-text-rendering: auto;
 
 // Control header font sizes
 
@@ -201,7 +201,7 @@ $header-font-weight: 200;
 // $paragraph-aside-font-size: emCalc(14);
 // $paragraph-aside-line-height: 1.35;
 // $paragraph-aside-font-style: italic;
-// $paragraph-text-rendering: optimizeLegibility;
+$paragraph-text-rendering: auto;
 
 // Style <code> tags
 
