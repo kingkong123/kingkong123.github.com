@@ -75,7 +75,7 @@ $shell-color: #5861CE;
 	span{
 		display: inline-block;
 		height: 100%;
-		opacity: 0.65;
+		opacity: 0.85;
 		&.css{
 			background: $css-color;
 		}
@@ -172,6 +172,10 @@ ul.lang-list li{
 	}
 }
 
+.fork-me{
+	display: none;
+}
+
 @media #{$small} {
 	ul.lang-list li{
 		display: block;
@@ -179,6 +183,9 @@ ul.lang-list li{
 		span.byte{
 			display: inline;
 		}
+	}
+	.fork-me{
+		display: block;
 	}
 }
 
