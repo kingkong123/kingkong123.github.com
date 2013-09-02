@@ -1,5 +1,5 @@
 /*
- * GitHubUserApi.js
+ * GitHubUserLangs.js (https://github.com/kingkong123/github-user-langs)
  * version 1.0.0
  * jQuery Plugin
  * by kingkong123 (http://kingkong123.github.io/)
@@ -26,6 +26,7 @@
 
 		var defaults = {
 			user: '',
+			includedForks: true,
 			repoType: 'all', // all, owner, public, private, member
 			repoSort: 'full_name', // created, updated, pushed, full_name
 			repoDirection: 'asc', // asc, desc
@@ -43,8 +44,26 @@
 
 		var LANG_SORTS = ['name', 'size'];
 
-		var getJson = function(url){
-			return $.getJSON(url, function(data){});
+		var getJson = function(url, callback){
+			return $.getJSON(url, function(data){}).fail(function(jqxhr, textStatus, error){
+				if(callback && $.isFunction(callback)){
+					if(jqxhr.responseJSON.message != null){
+						return callback({ success: false, message: jqxhr.responseJSON.message });
+					}else if(error){
+						return callback({ success: false, message: error });
+					}
+
+					return callback({ success: false, message: 'Fail to connect to server, please retry.' });
+				}else{
+					if(jqxhr.responseJSON.message != null){
+						return console.log(jqxhr.responseJSON.message);
+					}else if(error){
+						return console.log(error);
+					}
+
+					return console.log('Fail to connect to server, please retry.');
+				}
+			});
 		}
 
 		var getUserInfoURL = function(user){
@@ -79,6 +98,18 @@
 			return API_URL+'repos/'+user+'/'+name+'/languages';
 		}
 
+		var removeForkedRepos = function(repos){
+			var newRepos = [];
+
+			$.each(repos, function(idx, val){
+				if(!val.fork){
+					newRepos.push(val);
+				}
+			});
+
+			return newRepos;
+		}
+
 		this.init = function(options){
 			opts = $.extend( {}, defaults, options );
 
@@ -88,7 +119,7 @@
 		this.getUserInfo = function(callback){
 			if(!userInfo.success){
 				var url = getUserInfoURL(opts.user);
-				var userInfoJson = getJson(url);
+				var userInfoJson = getJson(url, callback);
 
 				userInfoJson.complete(function(data){
 					//console.log(data);
@@ -114,7 +145,7 @@
 		this.getAllRepos = function(callback1, callback2){
 			if(!allRepos.success){
 				var url = getAllReposURL(opts.user);
-				var allReposJson = getJson(url);
+				var allReposJson = getJson(url, (callback2 != null? callback2: callback1));
 
 				allReposJson.complete(function(data){
 					//console.log(data);
@@ -123,7 +154,10 @@
 							data.responseJSON.sort( $scope.customSort(opts.repoSort, opts.repoDirection) );
 						}
 
-						//console.log(data);
+						if(!opts.includedForks){
+							data.responseJSON = removeForkedRepos(data.responseJSON);
+						}
+
 						allRepos.success = true;
 						allRepos.data = data.responseJSON;
 						
@@ -207,7 +241,7 @@
 						//console.log(val);
 
 						var url = getRepoLangsURL(opts.user, val.name);
-						var langJson = getJson(url);
+						var langJson = getJson(url, callback);
 
 						langJson.complete(function(data){
 							if(data.status == 200){
@@ -218,7 +252,7 @@
 
 								return checkLangsCompleted(callback);
 							}else{
-								allRepos.message = 'Fail to connect to server, please retry.';
+								allLangs.message = 'Fail to connect to server, please retry.';
 								return callback(allLangs);
 							}
 						});
